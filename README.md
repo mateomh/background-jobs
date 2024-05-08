@@ -22,3 +22,7 @@ Things you may want to cover:
 * Deployment instructions
 
 * ...
+
+
+## Run the app
+docker compose -f dev.docker-compose.yml up
