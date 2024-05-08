@@ -1,0 +1,87 @@
+# Base image to use for multiple services
+x-base-app-image:
+  &base-app
+  build:
+    context: .
+    dockerfile: ./docker/app.Dockerfile
+  image: base-app:1.0
+  tmpfs:
+    - /tmp
+  tty: true
+  stdin_open: true
+  working_dir: /app
+  volumes:
+    - .:/app
+  environment:
+    - RAILS_ENV=development
+    - BUNDLE_PATH=/usr/local/bundle
+    - DB_USER=postgres
+    - DB_PASSWORD=password
+    - DB_HOST=db
+    - REDIS_URL=redis://redis:6379
+  networks:
+    - background-jobs-network
+
+services:
+  # app:
+  #   build:
+  #     context: .
+  #     dockerfile: ./docker/app.Dockerfile
+  #   command: rails server -b 0.0.0.0
+  #   ports:
+  #     - 3500:3000
+  #   working_dir: /app
+  #   environment:
+  #     - RAILS_ENV=development
+  #     - BUNDLE_PATH=/usr/local/bundle
+  #     - DB_USER=postgres
+  #     - DB_PASSWORD=password
+  #     - DB_HOST=db
+  #   volumes:
+  #     - .:/app
+  #   depends_on:
+  #     - db
+  #   networks:
+  #     - background-jobs-network
+  #   develop:
+  #     watch:
+  #       - action: sync
+  #         path: .
+  #         target: /app
+  app:
+    <<: *base-app # Use the base app
+    entrypoint: ./docker/entrypoint.sh
+    command: rails server -b 0.0.0.0
+    ports:
+      - 3500:3000
+    depends_on:
+      - db
+      - redis
+  sidekiq:
+    <<: *base-app
+    command: bundle exec sidekiq
+  redis:
+    image: redis:alpine
+    ports:
+      - 6379:6379
+    command: redis-server --save 20 1 --loglevel warining
+    volumes:
+      - redis:/data
+  db:
+    image: postgres:14
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=password
+    networks:
+      - background-jobs-network
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+networks:
+  background-jobs-network:
+    driver: bridge
+
+volumes:
+  postgres:
+  redis:
