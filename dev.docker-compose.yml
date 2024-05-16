@@ -59,14 +59,19 @@ services:
       - redis
   sidekiq:
     <<: *base-app
+    entrypoint: ./docker/entrypoint.sh
     command: bundle exec sidekiq
+    depends_on:
+      - app
   redis:
     image: redis:alpine
     ports:
       - 6379:6379
-    command: redis-server --save 20 1 --loglevel warining
+    command: redis-server --save 20 1 --loglevel warning
     volumes:
       - redis:/data
+    networks:
+    - background-jobs-network
   db:
     image: postgres:14
     ports:
