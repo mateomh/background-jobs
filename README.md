@@ -25,4 +25,7 @@ Things you may want to cover:
 
 
 ## Run the app
-docker compose -f dev.docker-compose.yml up
+- docker compose -f dev.docker-compose.yml up
+- docker attach <container_id>
+- docker exec -t -i b9c51852d739 bash
+- docker exec -t -i b9c51852d739 sh
