@@ -1,0 +1,8 @@
+:concurrency: 5
+staging:
+  :concurrency: 10
+:queues:
+  - [critical, 2]
+  - default
+  - low
+  - custom_queue
