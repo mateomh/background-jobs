@@ -1,0 +1,9 @@
+#!usr/local/bin ruby
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'config', 'environment'))
+require 'delayed/command'
+
+# Run worker daemonized
+# Delayed::Command.new(ARGV).daemonized
+
+# Run worker undaemonized, like rake jobs:work
+Delayed::Worker.new(:min_priority => ENV['MIN_PRIORITY'], :max_priority => ENV['MAX_PRIORITY']).start

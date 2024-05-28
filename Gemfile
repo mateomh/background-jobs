@@ -36,6 +36,9 @@ gem "bootsnap", require: false
 # gem "rack-cors"
 
 gem 'sidekiq'
+gem 'delayed_job'
+gem 'delayed_job_active_record'
+gem 'daemons'
 gem 'redis'
 
 group :development, :test do
