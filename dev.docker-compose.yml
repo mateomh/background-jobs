@@ -63,6 +63,14 @@ services:
     command: bundle exec sidekiq
     depends_on:
       - app
+      - db
+  dj:
+    <<: *base-app
+    entrypoint: ./docker/entrypoint.sh
+    command: ruby ./script/delayed_job
+    depends_on:
+      - app
+      - db
   redis:
     image: redis:alpine
     ports:
